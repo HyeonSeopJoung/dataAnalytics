@@ -17,12 +17,14 @@ int main() {
 	}
 
 	int movie_showed[SIZE];
-	int n;
+	int n = 0;
 	int predict_movie;
 
 	printf("입력한 n개의 movie를 본 (평점이 threshold 이상) 사람 중 입력한 movie를 본 사람.\n ");
-	printf("Input the n (n <= %d) : ", SIZE);
-	scanf("%d", &n);
+	while (!(n <= SIZE && 0 < n)) {
+		printf("Input the n (1<= n <= %d) : ", SIZE);
+		scanf("%d", &n);
+	}
 	int i;
 	printf("Input %d movie number(s)\n", n);
 	for (i = 0; i < n; i++) {
@@ -56,13 +58,18 @@ int main() {
 
 	int user, movie;
 	float like;
-
 	int print_check = 0;
+
+	int total = 0;// 모든 movie_showed 가 나온 user의 수
+	int num_include_predict = 0; //predict 까지 나온 user수
+
 	while (!feof(fpbaskets)) {
 		fscanf(fpbaskets, "%d,%d,%f", &user, &movie, &like);
 		if (old_user != user) { //user 가 바뀐경우
-			if (num_movie_showed == n && is_predict_movie == 0) {
-				fprintf(fpoutput, "X\n");
+			if (num_movie_showed == n ) {
+				total++;
+				if(is_predict_movie == 0)
+					fprintf(fpoutput, "X\n");
 			}
 			is_predict_movie = 0;
 			num_movie_showed = 0;
@@ -108,8 +115,8 @@ int main() {
 		//n개가 다 맞은 user
 		if (num_movie_showed == n) {
 			if (is_predict_movie == 1) {
-				printf("1\n");
 				fprintf(fpoutput, "O\n");
+				num_include_predict++;
 				pass_user = user;
 			}
 			else if (is_predict_movie == -1) {
@@ -119,9 +126,18 @@ int main() {
 		}
 	}
 
+	fprintf(fpoutput, "\n\n\nTotal , %d\n", total);
+	fprintf(fpoutput, "Including predict item , %d\n", num_include_predict);
+	fprintf(fpoutput, "Confidence , %.3f\n", (float)num_include_predict/total);
+
+	printf("\nTotal : %d\n", total);
+	printf("Including predict item : %d\n", num_include_predict);
+	printf("Confidence : %.3f\n", (float)num_include_predict / total);
+
+
 	fclose(fpbaskets);
 	fclose(fpoutput);
-	printf("Success! Check the output file\n");
+	printf("\nSuccess! Check the output file\n");
 	return 0;
 
 }
