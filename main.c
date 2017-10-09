@@ -1,7 +1,7 @@
 #include<stdio.h>
 #include<stdlib.h>
 
-#define BASKETS_FILE "training.csv"
+#define BASKETS_FILE "baskets.csv"
 #define OUTPUT_FILE "output.csv"
 #define LIKE_THRESHOLD 4.0
 #define SIZE 10
