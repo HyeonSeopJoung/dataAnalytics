@@ -32,20 +32,20 @@ int main() {
 	scanf("%d", &predict_movie);
 
 	printf("\n계산 중...\n");
-	
+
 	FILE * fpoutput;
 	fpoutput = fopen(OUTPUT_FILE, "w");
 	if (fpoutput == NULL) {
 		printf("file open error!\n");
 		return -1;
 	}
-	
+
 	fprintf(fpoutput, "USER,");
 	for (i = 0; i < n; i++) {
-		fprintf(fpoutput, "%d,",movie_showed[i]);
+		fprintf(fpoutput, "MV. %d,", movie_showed[i]);
 	}
-	fprintf(fpoutput, "%d\n", predict_movie);
-	
+	fprintf(fpoutput, "pred. %d\n", predict_movie);
+
 	int pass_user = 0;	//pass 해야하는 user의 경우
 	int check_user = 0;	//n개 다 맞을시 활성화
 	int old_user = 0; //user
@@ -58,7 +58,7 @@ int main() {
 	float like;
 
 	int print_check = 0;
-	while (!feof(fpbaskets)) {		
+	while (!feof(fpbaskets)) {
 		fscanf(fpbaskets, "%d,%d,%f", &user, &movie, &like);
 		if (old_user != user) { //user 가 바뀐경우
 			if (num_movie_showed == n && is_predict_movie == 0) {
@@ -75,22 +75,10 @@ int main() {
 			continue;
 		}
 
-		//n개가 다 맞은 user
-		if (num_movie_showed == n) {
-			if (is_predict_movie == 1) {
-				printf("1\n");
-				fprintf(fpoutput, "O\n");					
-				pass_user = user;
-			}
-			else if (is_predict_movie == -1) {
-				fprintf(fpoutput, "X\n");
-				pass_user = user;
-			}
-		}
-		
+
 		//predict movie check.
 		if (movie == predict_movie) {
-			if(like >= LIKE_THRESHOLD)
+			if (like >= LIKE_THRESHOLD)
 				is_predict_movie = 1;
 			else
 				is_predict_movie = -1;
@@ -116,7 +104,19 @@ int main() {
 				fprintf(fpoutput, "O,");
 			}
 			print_check = 1;
-		}		
+		}
+		//n개가 다 맞은 user
+		if (num_movie_showed == n) {
+			if (is_predict_movie == 1) {
+				printf("1\n");
+				fprintf(fpoutput, "O\n");
+				pass_user = user;
+			}
+			else if (is_predict_movie == -1) {
+				fprintf(fpoutput, "X\n");
+				pass_user = user;
+			}
+		}
 	}
 
 	fclose(fpbaskets);
